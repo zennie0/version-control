@@ -35,7 +35,7 @@ yargs(hideBin(process.argv))
     })
 },
 (argv)=>{
-    commitRepo(argv.message);
+    revertRepo(argv.commitID);
 }
 )
 .parse();
