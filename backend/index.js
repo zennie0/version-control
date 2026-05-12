@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import http from "http";
 import {Server} from "socket.io";
+import mainRouter from "./routes/main.router.js"
 
 
 dotenv.config();
@@ -67,10 +68,7 @@ function startServer(){
 
 app.use(cors({origin:"*"}));
 
-app.get("/",(req,res)=>{
-    res.send("welcome!");
-});
-
+app.use("/",mainRouter);
 
 let user ="test";
 
@@ -81,6 +79,7 @@ const io = new Server(httpServer,{
         methods:["GET","POST"],
     },
 });
+
 
 io.on("connection", (socket)=>{
 socket.on("joinRoom", (userID)=>{
