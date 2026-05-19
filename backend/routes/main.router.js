@@ -1,6 +1,6 @@
 import express from "express";
 import userRouter from "./user.router.js"
-import repoRouter from "./repo.router.js"
+import repoRouter from "./repo.routes.js"
 import issueRouter from "./issue.router.js"
 
 const mainRouter = express.Router();

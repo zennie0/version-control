@@ -15,8 +15,8 @@ const userRouter = express.Router();
 userRouter.get("/allUsers",getAllUsers);
 userRouter.post("/signup",signup);
 userRouter.post("/login",login);
-userRouter.put("/updateProfile",updateUserProfile);
-userRouter.delete("/deleteProfile",deleteUserProfile);
-userRouter.get("/getUserProfile",getAllUsers);
+userRouter.put("/updateProfile/:id",updateUserProfile);
+userRouter.delete("/deleteProfile/:id",deleteUserProfile);
+userRouter.get("/userProfile/:id",getUserProfile);
 
 export default userRouter;

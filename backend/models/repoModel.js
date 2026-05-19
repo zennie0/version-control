@@ -1,9 +1,10 @@
 import mongoose from "mongoose"
+const {Schema}= mongoose;
 
-const RepositorySchema =new mongoose.Schema({
+const RepositorySchema =new Schema({
   name:{
     type:String,
-require:true,
+required:true,
 unique:true,
   },
   description:{
@@ -20,13 +21,13 @@ visibility:{
 
 },
 owner:{
-    type:Schema.Type.ObjectId,
+    type:Schema.Types.ObjectId,
     ref:"User",
     required:true,
 },
 issues:[
     {
-        type:Schema.Type.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:"Issue"
     }
 ]
