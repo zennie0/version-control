@@ -4,7 +4,7 @@ import User from "../models/userModel.js";
 import Issue from "../models/issueModel.js";
 
 
-
+//create repo
 export const createRepository = async (req, res)=>{
     const {owner,name,issues,content,description,visibility}=req.body;
 
@@ -37,28 +37,141 @@ export const createRepository = async (req, res)=>{
     }
 };
 
+//getAllRepo
 
 export const getAllRepositories =async  (req, res)=>{
-    res.send("all repos fetched");
+    try{
+
+        const repositories = await Repository.find({})
+        .populate("owner")
+        .populate("issues");
+        res.json(repositories);
+
+
+    }catch(err){
+        console.error("Error during fetching all repositories: ",err.message)
+    res.status(500).send(err.message)
+    }
 };
+
+//open individual repo by id
+
 export const fetchRepositoryById =async  (req, res)=>{
-    res.send("one repos fetched");
+    const repoID = req.params.id;
+
+        try{
+             
+            const repository = Repository.find({_id:repoID})
+            .populate("owner")
+            .populate("issues")
+          
+
+            res.json(repository);
+
+
+
+    }catch(err){
+        console.error("Error during fetching the repo: ",err.message)
+    res.status(500).send(err.message)
+    }
 };
+
+//open repo by name
+
 export const fetchRepositoryByName =async  (req, res)=>{
-    res.send("one repos by name fetched");
+       const {name} = req.params;
+
+        try{
+             
+            const repository =await Repository.find({name})
+            .populate("owner")
+            .populate("issues")
+          
+
+            res.json(repository);
+
+
+
+    }catch(err){
+        console.error("Error during fetching the repo: ",err.message)
+    res.status(500).send(err.message)
+    }
 };
+
+//open repo for curr user
+
 export const fetchRepositoryForCurrentUser =async  (req, res)=>{
-    res.send(" repos fetched for current user");
+     const userId=req.user;
+       try{
+
+        const repositories = await Repository.find({owner:userId});
+
+        if(!repositories || repositories.length==0){
+            return res.status(404).json({error:"User Repositories not found"})
+        }
+
+        res.json({message:"Repositories found!",repositories})
+    }catch(err){
+        console.error("Error during fetching current user repo : ",err.message)
+    res.status(500).send(err.message)
+    }
 };
+
+
+//updating repo
 
 export const updateRepository =async  (req, res)=>{
-    res.send("repo updated");
+   const {id} = req.params;
+   const {content,description}= req.body;
+
+       try{
+        const repository = await Repository.findById({id});
+ if(!repository || repository.length==0){
+            return res.status(404).json({error:"User repository not found"})
+        }
+        repository.content.push(content);
+        repository.description=description;
+        const updatedRepo = await repository.save();
+        res.json({message:"repo updated!",
+         repository:updatedRepo
+        })
+      
+    }catch(err){
+        console.error("Error updating the repo: ",err.message)
+    res.status(500).send(err.message)
+    }
 };
 export const toggleVisibilityById =async  (req, res)=>{
-    res.send("private or publice");
+       const {id} = req.params;
+       try{
+        const repository = await Repository.findById({id});
+ if(!repository || repository.length==0){
+            return res.status(404).json({error:"User repository not found"})
+        }
+       repository.visibility = !repository.visibility;
+        const updatedRepo = await repository.save();
+        res.json({message:"repo visibilty changed!",
+         repository:updatedRepo
+        })
+      
+    }catch(err){
+        console.error("Error updating the repo: ",err.message)
+    res.status(500).send(err.message)
+    }
 };
 export const deleteRepositoryById = async (req, res)=>{
-    res.send("repo deleted");
-};
+    const {id}= req.params;
+        try{
+ const repo = await Repository.findByIdAndDelete(id);
+ if(!repo){
+    return res.status(404).json({error:"Repository not found for deleteing"})
+ }
 
+ res.json({message:"Repo deleted"});
 
+    }catch(err){
+        console.error("Error during deleting repo: ",err.message)
+    res.status(500).send(err.message)
+    }
+
+}
